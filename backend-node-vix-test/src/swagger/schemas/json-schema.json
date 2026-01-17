@@ -188,6 +188,18 @@
             "null"
           ]
         },
+        "discountRate": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "minConsumption": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
         "vM": {
           "type": "array",
           "items": {
@@ -222,6 +234,20 @@
         },
         "disk": {
           "type": "integer"
+        },
+        "pass": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "location": {
+          "type": "string",
+          "default": "bre_barueri",
+          "enum": [
+            "bre_barueri",
+            "usa_miami"
+          ]
         },
         "hasBackup": {
           "type": [
@@ -339,6 +365,37 @@
           "format": "date-time"
         },
         "deletedAt": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "fullName": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "userPhoneNumber": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "field": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "department": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "hiringDate": {
           "type": [
             "string",
             "null"

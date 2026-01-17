@@ -127,6 +127,7 @@ export const useVmResource = () => {
     setIsLoadingCreateVM(true);
 
     const auth = await getAuth();
+
     const response = await api.post<IVMCreatedResponse>({
       url: "/vm",
       data: {
@@ -245,11 +246,11 @@ export const useVmResource = () => {
     setIsLoadingUpdateVM(false);
     if (response.error) {
       toast.error(response.message);
-      return;
+      return false;
     }
 
     toast.success(t("createVm.updateVmSuccess"));
-    return;
+    return true;
   };
 
   const deleteVM = async (idVM: number) => {

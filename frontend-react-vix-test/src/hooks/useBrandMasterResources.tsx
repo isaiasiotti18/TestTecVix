@@ -153,24 +153,27 @@ export const useBrandMasterResources = () => {
     domain,
   }: IUpdateBrandMaster) => {
     if (!role || (role !== "admin" && role !== "manager")) return;
+    const brandId = idBrand || idBrandInfo;
+    if (!brandId) return;
     const auth = await getAuth();
     setIsLoading(true);
+    
+    const payload: any = {};
+    if (brandName !== undefined) payload.brandName = brandName;
+    if (idBrandTheme !== undefined) payload.idBrandTheme = idBrandTheme;
+    if (brandLogo !== undefined) payload.brandLogo = brandLogo;
+    if (domain !== undefined) payload.domain = domain;
+    
     const response = await api.put({
-      url: `/brand-master/${idBrand}`,
+      url: `/brand-master/${brandId}`,
       auth,
-      data: {
-        brandName,
-        idBrandTheme,
-        brandLogo,
-        domain,
-      },
+      data: payload,
     });
     setIsLoading(false);
     if (response.error) {
       toast.error(response.message);
-      return;
+      return null;
     }
-    toast.success(t("whiteLabel.dnsSaved"));
     return response.data;
   };
 
@@ -265,33 +268,34 @@ export const useBrandMasterResources = () => {
     }
     const auth = await getAuth();
     setIsLoading(true);
+
+    const payload: any = {
+      brandName: data.companyName || undefined,
+      emailContact: data.contactEmail || undefined,
+      isActive: true,
+    };
+
+    if (data.brandLogo) payload.brandLogo = data.brandLogo;
+    if (data.mspDomain) payload.domain = data.mspDomain;
+    if (data.sector) payload.setorName = data.sector;
+    if (data.locality) payload.location = data.locality;
+    if (data.city) payload.city = data.city;
+    if (data.phone) payload.smsContact = data.phone;
+    if (data.countryState) payload.state = data.countryState;
+    if (data.street) payload.street = data.street;
+    if (data.streetNumber) payload.placeNumber = data.streetNumber;
+    if (data.cnpj) payload.cnpj = data.cnpj;
+    if (data.cep) payload.cep = data.cep;
+    if (data.cityCode) payload.cityCode = data.cityCode;
+    if (data.district) payload.district = data.district;
+    if (data.isPoc !== undefined) payload.isPoc = Boolean(data.isPoc);
+    if (data.discountRate !== undefined) payload.discountRate = data.discountRate;
+    if (data.minConsumption !== undefined) payload.minConsumption = data.minConsumption;
+
     const response = await api.post<INewMSPResponse>({
       url: `/brand-master`,
       auth,
-      data: {
-        brandName: data.companyName,
-        idBrandTheme: 1,
-        isActive: true,
-        brandLogo: data.brandLogo,
-        domain: undefined,
-        setorName: data.sector,
-        fieldName: undefined,
-        location: data.locality,
-        city: data.city,
-        emailContact: data.contactEmail,
-        smsContact: data.phone,
-        timezone: undefined,
-        state: data.countryState,
-        street: data.street,
-        placeNumber: data.streetNumber,
-        cnpj: data.cnpj,
-        cep: data.cep,
-        cityCode: data?.cityCode ? data.cityCode : undefined,
-        district: data?.district ? data.district : undefined,
-        isPoc: Boolean(data?.isPoc),
-        discountRate: data?.discountRate,
-        minConsumption: data?.minConsumption,
-      },
+      data: payload,
     });
 
     setIsLoading(false);
@@ -374,6 +378,7 @@ export const useBrandMasterResources = () => {
         placeNumber: data.placeNumber,
         smsContact: data.smsContact,
         brandLogo: data.brandLogo,
+        domain: data.domain,
         cityCode: data?.cityCode ? data.cityCode : undefined,
         district: data?.district ? data.district : undefined,
         isPoc: Boolean(data?.isPoc),

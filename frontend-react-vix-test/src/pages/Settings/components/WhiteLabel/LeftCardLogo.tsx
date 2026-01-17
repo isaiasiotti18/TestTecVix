@@ -10,6 +10,7 @@ import { TextRob12Font2Xs } from "../../../../components/Text2Xs";
 import { CircleIcon } from "../../../../icons/CircleIcon";
 import { TextRob16FontL } from "../../../../components/TextL";
 import { useZBrandInfo } from "../../../../stores/useZBrandStore";
+import { useZUserProfile } from "../../../../stores/useZUserProfile";
 
 interface IWhiteLabelChildProps {
   theme: {
@@ -22,9 +23,11 @@ export const LeftCardLogo = ({ theme }: IWhiteLabelChildProps) => {
   const { mode } = useZTheme();
   const { t } = useTranslation();
   const { handleUpload, isUploading } = useUploadFile();
-  const { setBrandInfo, brandLogoTemp } = useZBrandInfo();
+  const { setBrandInfo, brandLogoTemp, brandLogo } = useZBrandInfo();
+  const { role } = useZUserProfile();
+  const isAdmin = role === "admin";
   const [uploadedFile, setUploadedFile] = useState<string | null>(
-    brandLogoTemp,
+    brandLogoTemp || brandLogo,
   );
 
   const onDrop = async (acceptedFiles: File[]) => {
@@ -49,14 +52,21 @@ export const LeftCardLogo = ({ theme }: IWhiteLabelChildProps) => {
   const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     onDrop,
     accept: { "image/*": [".png", ".jpg", ".jpeg", ".gif", ".svg", ".webp"] },
-    maxSize: 50 * 1024 * 1024, // Limita para 50MB
+    maxSize: 50 * 1024 * 1024,
+    disabled: !isAdmin,
   });
 
   useEffect(() => {
-    if (!brandLogoTemp) {
+    console.log('brandLogoTemp:', brandLogoTemp);
+    console.log('brandLogo:', brandLogo);
+    if (brandLogoTemp) {
+      setUploadedFile(brandLogoTemp);
+    } else if (brandLogo) {
+      setUploadedFile(brandLogo);
+    } else {
       setUploadedFile(null);
     }
-  }, [brandLogoTemp]);
+  }, [brandLogoTemp, brandLogo]);
 
   return (
     <>
@@ -86,7 +96,8 @@ export const LeftCardLogo = ({ theme }: IWhiteLabelChildProps) => {
             ? theme[mode].grayLight
             : theme[mode].lightV2,
           marginBottom: "24px",
-          cursor: "pointer",
+          cursor: isAdmin ? "pointer" : "not-allowed",
+          opacity: isAdmin ? 1 : 0.6,
         }}
       >
         <input {...getInputProps()} />
@@ -139,6 +150,7 @@ export const LeftCardLogo = ({ theme }: IWhiteLabelChildProps) => {
         }}
       >
         <Button
+          disabled={!isAdmin}
           sx={{
             background: theme[mode].blue,
             border: `1px solid ${theme[mode].blue}`,
@@ -159,6 +171,7 @@ export const LeftCardLogo = ({ theme }: IWhiteLabelChildProps) => {
           {t("whiteLabel.changeLogo")}
         </Button>
         <Button
+          disabled={!isAdmin}
           sx={{
             background: "transparent",
             color: theme[mode].blueDark,
@@ -174,7 +187,7 @@ export const LeftCardLogo = ({ theme }: IWhiteLabelChildProps) => {
               width: "100%",
             },
           }}
-          onClick={hadleRemoveLogo} // Remove o logo
+          onClick={hadleRemoveLogo}
         >
           {t("whiteLabel.removeLogo")}
         </Button>
